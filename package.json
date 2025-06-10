@@ -1,0 +1,64 @@
+{
+  "name": "jepsh",
+  "description": "A lightweight React alternative",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "author": "Jepsh Team <hi@jepsh.dev>",
+  "homepage": "https://jepsh.dev",
+  "keywords": [
+    "jepsh",
+    "framework",
+    "javascript"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./dom": {
+      "import": "./dist/dom/index.js",
+      "require": "./dist/dom/index.cjs",
+      "types": "./dist/dom/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jepsh/jepsh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jepsh/jepsh/issues"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "build:dts": "rollup -c rollup.config.dts.js",
+    "build:dts:pack": "tsc && npm run build:dts && rimraf ./dist/types",
+    "build:cleanup": "rimraf dist",
+    "pack": "rimraf dist && npm run build && npm run build:dts:pack",
+    "prepublishOnly": "npm run build && npm run build:dts:pack"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.41.1",
+    "rollup-plugin-dts": "^6.2.1",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20.x"
+  }
+}
