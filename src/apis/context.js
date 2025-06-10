@@ -20,8 +20,8 @@ function createContext(defaultValue) {
       return {
         type: "CONTEXT_PROVIDER",
         props: {
-          context: context,
-          value: value,
+          context,
+          value,
           children: normalizedChildren,
           _cleanup: () => {
             if (context._valueStack.length > 1) {

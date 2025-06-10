@@ -3,7 +3,6 @@ import { scheduleUpdate, enqueueBatchedUpdate, batchUpdates } from "@/scheduler"
 import { captureError, createError } from "@/handler";
 
 let isTransition = false;
-let pendingTransitions = new Set();
 
 /**
  * Deeply compares two values for equality.
@@ -718,7 +717,7 @@ function useReducer(key, reducer, initial) {
       const enhanced = createError("REDUCER", `Error in reducer: ${error.message}`, globalState.wipFiber?.type?.name, key);
       if (!captureError(enhanced, globalState.wipFiber)) {
         console.error(enhanced);
-        return;
+        return; // eslint-disable-line no-useless-return
       }
     }
   });
@@ -832,6 +831,7 @@ function useTransition(key) {
     throw createError("HOOK", "useTransition must be called inside a component", "Unknown", key);
   }
 
+  const pendingTransitions = new Set();
   const hooks = globalState.wipFiber.hooks || {};
   const [isPending, setIsPending] = useState(`${key}-pending`, false);
 

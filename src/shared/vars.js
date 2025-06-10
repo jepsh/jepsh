@@ -1,3 +1,4 @@
+// eslint-disable-next-line prefer-const
 let state = {
   wipFiber: null,
   wipRoot: null,

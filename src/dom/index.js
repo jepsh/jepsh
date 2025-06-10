@@ -1,7 +1,7 @@
 import { workLoop } from "./work";
 import { render } from "./renderer";
 
-requestIdleCallback(workLoop);
+requestIdleCallback(workLoop); // eslint-disable-line no-undef
 
 const JepshDOM = {
   render,
