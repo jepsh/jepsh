@@ -54,6 +54,7 @@ function updateDom(dom, prevProps, nextProps) {
       .filter(isGone(prevProps, nextProps))
       .forEach((name) => {
         if (name === "style" && typeof prevProps[name] === "object") {
+          // eslint-disable-next-line no-undef
           if (dom instanceof HTMLElement) {
             dom.style.cssText = "";
           }
@@ -67,6 +68,7 @@ function updateDom(dom, prevProps, nextProps) {
       .filter(isNew(prevProps, nextProps))
       .forEach((name) => {
         if (name === "style" && typeof nextProps[name] === "object") {
+          // eslint-disable-next-line no-undef
           if (dom instanceof HTMLElement) {
             Object.entries(nextProps[name]).forEach(([k, v]) => {
               dom.style[k] = v;
@@ -122,7 +124,7 @@ function commitDeletion(fiber, domParent) {
 
   if (fiber.dom) {
     try {
-      let actualParent = fiber.dom.parentNode;
+      const actualParent = fiber.dom.parentNode;
       if (actualParent && actualParent.contains(fiber.dom)) {
         actualParent.removeChild(fiber.dom);
       }
@@ -170,7 +172,7 @@ function commitWork(fiber) {
     const enhanced = enhanceError(error, {
       component: fiber.type?.name || "Unknown",
       phase: "commit",
-      fiber: fiber,
+      fiber,
     });
 
     if (!captureError(enhanced, fiber)) {
@@ -184,7 +186,7 @@ function commitWork(fiber) {
   } catch (error) {
     const enhanced = enhanceError(error, {
       phase: "commit-recursive",
-      fiber: fiber,
+      fiber,
     });
 
     if (!captureError(enhanced, fiber)) {
@@ -268,7 +270,7 @@ function workLoop(deadline) {
     }
   }
 
-  requestIdleCallback(workLoop);
+  requestIdleCallback(workLoop); // eslint-disable-line no-undef
 }
 
 export { workLoop };

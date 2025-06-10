@@ -39,7 +39,7 @@ function reconcileChildren(wipFiber, elements) {
     if (sameType) {
       newFiber = {
         type: old.type,
-        key: key,
+        key,
         props: element.props || {},
         dom: old.dom,
         parent: wipFiber,
@@ -52,7 +52,7 @@ function reconcileChildren(wipFiber, elements) {
     if (element && !sameType) {
       newFiber = {
         type: element.type,
-        key: key,
+        key,
         props: element.props || {},
         dom: null,
         parent: wipFiber,
@@ -124,7 +124,7 @@ function updateFunctionComponent(fiber) {
     const enhanced = enhanceError(error, {
       component: fiber.type.name || "Anonymous",
       phase: "render",
-      fiber: fiber,
+      fiber,
     });
 
     if (captureError(enhanced, fiber)) {
@@ -184,7 +184,7 @@ function performUnitOfWork(fiber, createDom) {
     const enhanced = enhanceError(error, {
       component: fiber.type?.name || "Unknown",
       phase: "reconciliation",
-      fiber: fiber,
+      fiber,
     });
 
     if (!captureError(enhanced, fiber)) {

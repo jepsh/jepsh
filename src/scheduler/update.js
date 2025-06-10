@@ -16,7 +16,7 @@ function scheduleUpdate(priority = PRIORITY.NORMAL) {
     dom: globalState.currentRoot.dom,
     props: globalState.currentRoot.props,
     alternate: globalState.currentRoot,
-    priority: priority,
+    priority,
   };
   globalState.nextUnitOfWork = globalState.wipRoot;
   globalState.deletions = [];
@@ -55,7 +55,7 @@ function flushBatchedUpdates() {
   isBatchingUpdates = false;
 
   if (globalState.nextUnitOfWork && !globalState.wipRoot) {
-    requestIdleCallback(workLoop);
+    requestIdleCallback(workLoop); // eslint-disable-line no-undef
   }
 }
 
