@@ -1,5 +1,5 @@
 /**
- * Creates a custom error object for WTFact-specific errors.
+ * Creates a custom error object for Jepsh-specific errors.
  * @param {string} type - The type of error (e.g., HOOK, EFFECT).
  * @param {string} message - The error message.
  * @param {string} [component="Unknown"] - The component name where the error occurred.
@@ -15,7 +15,7 @@ function createError(type, message, component, hookKey) {
 }
 
 /**
- * Enhances a generic error with WTFact-specific context.
+ * Enhances a generic error with Jepsh-specific context.
  * @param {Error} error - The original error.
  * @param {{ component?: string, phase?: string, fiber?: any }} context - Additional context for the error.
  * @returns {Error} The enhanced error object.

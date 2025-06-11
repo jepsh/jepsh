@@ -32,7 +32,7 @@ function useGlobalState(storeNameOrSelector, selector) {
     try {
       return selectorFn(store.getState());
     } catch (error) {
-      console.error(`[WTFact] Selector error in useGlobalState:`, error);
+      console.error("[Jepsh] Selector error in useGlobalState:", error);
       return undefined;
     }
   });
@@ -49,7 +49,7 @@ function useGlobalState(storeNameOrSelector, selector) {
             setSelectedState(newSelected);
           }
         } catch (error) {
-          console.error(`[WTFact] Selector error in subscription:`, error);
+          console.error("[Jepsh] Selector error in subscription:", error);
         }
       });
 

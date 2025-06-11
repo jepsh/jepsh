@@ -13,7 +13,7 @@ function createGlobalStore(initialState, options = {}) {
   const { name = `store-${Date.now()}`, middleware = [], devTools = isDev } = options;
 
   if (globalStores.has(name)) {
-    console.warn(`[WTFact] Store "${name}" already exists. Returning existing store.`);
+    console.warn(`[Jepsh] Store "${name}" already exists. Returning existing store.`);
     return globalStores.get(name);
   }
 
@@ -39,7 +39,7 @@ function createGlobalStore(initialState, options = {}) {
             state = result;
           }
         } catch (error) {
-          console.error(`[WTFact] Middleware error:`, error);
+          console.error("[Jepsh] Middleware error:", error);
         }
       });
 
@@ -54,7 +54,7 @@ function createGlobalStore(initialState, options = {}) {
         try {
           callback(state, prevState);
         } catch (error) {
-          console.error(`[WTFact] Store subscriber error:`, error);
+          console.error("[Jepsh] Store subscriber error:", error);
         }
       });
     },
@@ -71,7 +71,7 @@ function createGlobalStore(initialState, options = {}) {
       if (action && action.type) {
         store.setState(action.payload || {}, action.type);
       } else {
-        console.warn("[WTFact] Invalid action dispatched:", action);
+        console.warn("[Jepsh] Invalid action dispatched:", action);
       }
     },
   };
