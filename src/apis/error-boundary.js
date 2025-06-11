@@ -3,9 +3,9 @@ import { createElement } from "./element";
 import { ErrorBoundary } from "@/components/error-boundary";
 
 /**
- * Default error fallback component for error boundaries.
+ * Creates a default error fallback UI for error boundaries.
  * @param {Error} error - The error to display.
- * @returns {Object} A React-like element representing the error UI.
+ * @returns {{ type: string, props: { style: Record<string, string>, children: any[] }}} The fallback element.
  */
 function defaultErrorFallback(error) {
   return createElement(
@@ -26,10 +26,10 @@ function defaultErrorFallback(error) {
 }
 
 /**
- * Higher-order component that wraps a component with an error boundary.
+ * Wraps a component with an error boundary.
  * @param {Function} Component - The component to wrap.
- * @param {Function} [fallbackComponent] - Custom fallback UI component.
- * @returns {Function} The wrapped component with error boundary.
+ * @param {Function} [fallbackComponent] - The fallback UI to render on error.
+ * @returns {Function} The wrapped component.
  */
 function withErrorBoundary(Component, fallbackComponent) {
   return function WrappedWithErrorBoundary(props) {

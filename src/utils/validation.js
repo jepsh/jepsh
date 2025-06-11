@@ -3,10 +3,10 @@ import { devWarn } from "./dev";
 import { isDev } from "@/core/constants";
 
 /**
- * Validates proper hook usage in development mode.
- * @param {string} hookName - Name of the hook being validated.
- * @param {string} key - Hook key being validated.
- * @param {Object} fiber - Current fiber node.
+ * Validates hook usage in development mode.
+ * @param {string} hookName - The name of the hook.
+ * @param {string} key - The key used for the hook.
+ * @param {{ type?: { name?: string } } | null} fiber - The current fiber.
  */
 function validateHookUsage(hookName, key, fiber) {
   if (!isDev) return;

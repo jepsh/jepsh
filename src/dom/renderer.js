@@ -7,8 +7,8 @@ import { captureError } from "@/core/error-boundary";
 import { performUnitOfWork } from "@/core/reconciler";
 
 /**
- * The main work loop for the renderer.
- * @param {IdleDeadline} deadline - The idle callback deadline object.
+ * Processes the work loop for reconciliation and rendering.
+ * @param {{ timeRemaining: () => number }} deadline - The browser's idle callback deadline.
  */
 function workLoop(deadline) {
   let shouldYield = false;
@@ -54,9 +54,10 @@ function workLoop(deadline) {
 }
 
 /**
- * Renders a Jepsh element to the DOM.
- * @param {Object} element - The element to render.
+ * Renders a virtual DOM element into a container.
+ * @param {{ type: string | Function, props: { children?: any[] }, key?: string | null }} element - The virtual DOM element to render.
  * @param {Node} container - The DOM container to render into.
+ * @throws {Error} If the container or element is missing.
  */
 function render(element, container) {
   try {

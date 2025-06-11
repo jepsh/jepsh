@@ -1,7 +1,7 @@
 /**
- * Creates a context object with Provider component for state management.
- * @param {any} defaultValue - The default value for the context.
- * @returns {Object} An object containing Provider component and context reference.
+ * Creates a context object for sharing data between components.
+ * @param {any} defaultValue - The default value of the context.
+ * @returns {{ Provider: Function, _context: { _defaultValue: any, _currentValue: any, _valueStack: any[] }}} The context object with a Provider component.
  */
 function createContext(defaultValue) {
   const context = {

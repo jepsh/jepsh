@@ -3,12 +3,9 @@ import { useState, useEffect } from "@/hooks/basic";
 import { createElement } from "@/apis/element";
 
 /**
- * Error boundary component that catches errors in its child tree.
- * @param {Object} props - Component props.
- * @param {Function|Object} props.fallback - Fallback UI component or element.
- * @param {Function} [props.onError] - Error handler callback.
- * @param {Object} props.children - Child components to render.
- * @returns {Object} Either children or fallback UI if error occurred.
+ * A component for catching and handling errors in the component tree.
+ * @param {{ fallback?: Function | any, onError?: (error: Error, errorInfo: { componentStack: string }) => void, children: any }} props - The component props.
+ * @returns {any} The children or fallback UI if an error occurs.
  */
 function ErrorBoundary({ fallback, onError, children }) {
   const [hasError, setHasError] = useState("error-boundary-state", false);

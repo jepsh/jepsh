@@ -1,7 +1,7 @@
 /**
- * Creates a text element object for virtual DOM representation.
- * @param {string} text - The text content for the element.
- * @returns {Object} A virtual DOM text element object.
+ * Creates a text element for rendering
+ * @param {string|number} text - The text content
+ * @returns {Object} Text element object
  */
 function createTextElement(text) {
   return {
@@ -15,11 +15,11 @@ function createTextElement(text) {
 }
 
 /**
- * Creates a virtual DOM element.
- * @param {string|Function} type - The type of the element (component or HTML tag).
- * @param {Object|null} props - The properties/attributes of the element.
- * @param {...any} children - Child elements or text content.
- * @returns {Object} A virtual DOM element object.
+ * Creates a virtual DOM element
+ * @param {string|Function} type - Element type (string for DOM, function for components)
+ * @param {Object|null} props - Element properties
+ * @param {...*} children - Child elements
+ * @returns {Object} Virtual DOM element
  */
 function createElement(type, props, ...children) {
   return {

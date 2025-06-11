@@ -1,10 +1,10 @@
 /**
- * Creates a standardized error object with WTFact metadata.
- * @param {string} type - Error type/category.
- * @param {string} message - Error message.
- * @param {string} [component] - Component name where error occurred.
- * @param {string} [hookKey] - Hook key associated with the error.
- * @returns {Error} Enhanced error object with WTFact metadata.
+ * Creates a custom error object for WTFact-specific errors.
+ * @param {string} type - The type of error (e.g., HOOK, EFFECT).
+ * @param {string} message - The error message.
+ * @param {string} [component="Unknown"] - The component name where the error occurred.
+ * @param {string} [hookKey] - The hook key, if applicable.
+ * @returns {Error} The custom error object.
  */
 function createError(type, message, component, hookKey) {
   const componentName = component || "Unknown";
@@ -15,10 +15,10 @@ function createError(type, message, component, hookKey) {
 }
 
 /**
- * Enhances a regular error with WTFact context information.
- * @param {Error} error - Original error to enhance.
- * @param {Object} context - Additional context information.
- * @returns {Error} Enhanced error object.
+ * Enhances a generic error with WTFact-specific context.
+ * @param {Error} error - The original error.
+ * @param {{ component?: string, phase?: string, fiber?: any }} context - Additional context for the error.
+ * @returns {Error} The enhanced error object.
  */
 function enhanceError(error, context) {
   const enhanced = new Error(`[Jepsh] ${error.message}`);
@@ -27,9 +27,9 @@ function enhanceError(error, context) {
 }
 
 /**
- * Gets the component stack trace for error reporting.
- * @param {Object} fiber - The fiber node to start tracing from.
- * @returns {string} Formatted component stack trace.
+ * Generates a component stack trace for error reporting.
+ * @param {{ type?: string | { name?: string }, parent?: any }} fiber - The fiber to start the stack trace from.
+ * @returns {string} The formatted component stack trace.
  */
 function getComponentStack(fiber) {
   const stack = [];
@@ -48,10 +48,10 @@ function getComponentStack(fiber) {
 }
 
 /**
- * Checks if one fiber is an ancestor of another in the fiber tree.
- * @param {Object} ancestor - Potential ancestor fiber node.
- * @param {Object} descendant - Potential descendant fiber node.
- * @returns {boolean} True if ancestor is actually an ancestor of descendant.
+ * Checks if one fiber is an ancestor of another.
+ * @param {{ parent?: any }} ancestor - The potential ancestor fiber.
+ * @param {{ parent?: any }} descendant - The potential descendant fiber.
+ * @returns {boolean} True if ancestor is an ancestor of descendant, false otherwise.
  */
 function isAncestor(ancestor, descendant) {
   if (!ancestor || !descendant) return false;
