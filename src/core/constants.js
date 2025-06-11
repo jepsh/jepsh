@@ -12,4 +12,4 @@ export const PRIORITY = {
 
 export const isDev = typeof process !== "undefined" ? process.env.NODE_ENV !== "production" : true;
 export const globalStores = new Map();
-export const storeSubscribers = new Map();
+export const storeSubscriptions = new Map();
