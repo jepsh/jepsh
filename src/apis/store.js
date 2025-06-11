@@ -82,4 +82,23 @@ function createGlobalStore(initialState, options = {}) {
   return store;
 }
 
-export { createGlobalStore };
+/**
+ * Retrieves development tools for inspecting global stores.
+ * @returns {{ stores: string[], getStore: (name: string) => any, getStoreState: (name: string) => Record<string, any> | undefined, getStoreHistory: (name: string) => Record<string, any>[] | undefined, subscribers: Array<{ store: string, count: number }> } | null} Store debugging information, or null if not in development mode.
+ */
+function getStoreDevTools() {
+  if (!isDev) return null;
+
+  return {
+    stores: Array.from(globalStores.keys()),
+    getStore: (name) => globalStores.get(name),
+    getStoreState: (name) => globalStores.get(name)?.getState(),
+    getStoreHistory: (name) => globalStores.get(name)?.getHistory(),
+    subscribers: Array.from(storeSubscriptions.entries()).map(([name, subs]) => ({
+      store: name,
+      count: subs.size,
+    })),
+  };
+}
+
+export { createGlobalStore, getStoreDevTools };
