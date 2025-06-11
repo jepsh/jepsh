@@ -65,4 +65,48 @@ function useGlobalState(storeNameOrSelector, selector) {
   return [selectedState, setState, store];
 }
 
-export { useGlobalState };
+/**
+ * Hook for monitoring store performance metrics
+ * @param {string} storeName - Name of the store to monitor
+ * @returns {Object} Performance metrics object
+ */
+function useStorePerformance(storeName) {
+  const [metrics, setMetrics] = useState(`perf-${storeName}`, {
+    updateCount: 0,
+    lastUpdate: null,
+    averageUpdateTime: 0,
+  });
+
+  useEffect(
+    `perf-monitor-${storeName}`,
+    () => {
+      const store = globalStores.get(storeName);
+      if (!store) return;
+
+      let updateTimes = [];
+      const startTime = performance.now();
+
+      const unsubscribe = store.subscribe(() => {
+        const updateTime = performance.now();
+        updateTimes.push(updateTime - startTime);
+
+        if (updateTimes.length > 100) {
+          updateTimes = updateTimes.slice(-50);
+        }
+
+        setMetrics({
+          updateCount: metrics.updateCount + 1,
+          lastUpdate: new Date().toISOString(),
+          averageUpdateTime: updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length,
+        });
+      });
+
+      return unsubscribe;
+    },
+    [storeName]
+  );
+
+  return metrics;
+}
+
+export { useGlobalState, useStorePerformance };
