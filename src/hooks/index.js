@@ -16,6 +16,7 @@ import {
   useState,
   useTransition,
 } from "./basic";
+import { useGlobalState } from "./custom";
 
 export {
   use,
@@ -34,4 +35,6 @@ export {
   useRef,
   useState,
   useTransition,
+  // custom hooks
+  useGlobalState,
 };
