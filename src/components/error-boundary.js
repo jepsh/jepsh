@@ -1,6 +1,6 @@
-import { state as globalState } from "@/shared";
-import { useState, useEffect } from "@/hooks";
-import { createElement } from "@/apis";
+import { state as globalState } from "@/shared/global";
+import { useState, useEffect } from "@/hooks/basic";
+import { createElement } from "@/apis/element";
 
 /**
  * Error boundary component that catches errors in its child tree.

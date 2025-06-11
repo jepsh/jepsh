@@ -1,7 +1,7 @@
-import { state as globalState, priority as PRIORITY } from "@/shared";
-import { performUnitOfWork } from "@/fiber";
-import { flushEffects } from "@/scheduler";
-import { captureError, createError, enhanceError } from "@/handler";
+import { state as globalState } from "@/shared/global";
+import { flushEffects } from "@/core/scheduler";
+import { createError, enhanceError } from "@/utils/error";
+import { captureError } from "@/core/error-boundary";
 
 /**
  * Creates a DOM node for a fiber.
@@ -226,51 +226,4 @@ function commitRoot() {
   globalState.wipRoot = null;
 }
 
-/**
- * The main work loop for the renderer.
- * @param {IdleDeadline} deadline - The idle callback deadline object.
- */
-function workLoop(deadline) {
-  let shouldYield = false;
-  const fiberPriority = globalState.wipRoot?.priority || PRIORITY.NORMAL;
-  const timeSlice = fiberPriority === PRIORITY.IMMEDIATE ? 16 : fiberPriority === PRIORITY.NORMAL ? 5 : fiberPriority === PRIORITY.LOW ? 2 : 1;
-
-  while (globalState.nextUnitOfWork && !shouldYield) {
-    try {
-      globalState.nextUnitOfWork = performUnitOfWork(globalState.nextUnitOfWork, createDom);
-    } catch (error) {
-      const enhanced = enhanceError(error, {
-        component: globalState.nextUnitOfWork?.type?.name || "Unknown",
-        phase: "reconciliation",
-        fiber: globalState.nextUnitOfWork,
-      });
-
-      if (!captureError(enhanced, globalState.nextUnitOfWork)) {
-        console.error("[Jepsh] Unhandled error during reconciliation:", enhanced);
-        globalState.nextUnitOfWork = null;
-        globalState.wipRoot = null;
-        return;
-      }
-    }
-    shouldYield = deadline.timeRemaining() < timeSlice;
-  }
-
-  if (!globalState.nextUnitOfWork && globalState.wipRoot) {
-    try {
-      commitRoot();
-    } catch (error) {
-      const enhanced = enhanceError(error, {
-        phase: "commit",
-        fiber: globalState.wipRoot,
-      });
-
-      if (!captureError(enhanced, globalState.wipRoot)) {
-        console.error("[Jepsh] Unhandled error during commit:", enhanced);
-      }
-    }
-  }
-
-  requestIdleCallback(workLoop); // eslint-disable-line no-undef
-}
-
-export { workLoop };
+export { createDom, commitRoot };

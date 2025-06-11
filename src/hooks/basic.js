@@ -1,6 +1,9 @@
-import { state as globalState, priority as PRIORITY, isDev } from "@/shared";
-import { scheduleUpdate, enqueueBatchedUpdate, batchUpdates } from "@/scheduler";
-import { captureError, createError } from "@/handler";
+import { state as globalState } from "@/shared/global";
+import { PRIORITY } from "@/core/constants";
+import { scheduleUpdate, batchUpdates, enqueueBatchedUpdate } from "@/core/scheduler";
+import { createError } from "@/utils/error";
+import { captureError } from "@/core/error-boundary";
+import { validateHookUsage } from "@/utils/validation";
 
 let isTransition = false;
 
@@ -41,44 +44,6 @@ function areDepsEqual(deps1, deps2) {
   if (deps1.length !== deps2.length) return false;
 
   return deps1.every((dep, i) => deepEqual(dep, deps2[i]));
-}
-
-/**
- * Development-only warning logger.
- * @param {string} message - Warning message.
- * @param {string} [component] - Component name where warning occurred.
- * @param {any} [extra] - Additional debug information.
- */
-function devWarn(message, component, extra) {
-  if (!isDev) return;
-  console.warn(`[Jepsh Warning] ${message}${component ? ` in ${component}` : ""}`, extra || "");
-}
-
-/**
- * Validates proper hook usage in development mode.
- * @param {string} hookName - Name of the hook being validated.
- * @param {string} key - Hook key being validated.
- * @param {Object} fiber - Current fiber node.
- */
-function validateHookUsage(hookName, key, fiber) {
-  if (!isDev) return;
-
-  if (!fiber) {
-    devWarn(`${hookName} called outside of component render`, "Unknown");
-    return;
-  }
-
-  if (typeof key !== "string") {
-    devWarn(`${hookName} expects a string key as first argument`, fiber.type?.name);
-  }
-
-  if (key && key.includes("__")) {
-    devWarn(`${hookName} key contains reserved characters "__"`, fiber.type?.name);
-  }
-
-  if (key && key.length > 100) {
-    devWarn(`${hookName} key is unusually long (${key.length} chars)`, fiber.type?.name);
-  }
 }
 
 /**

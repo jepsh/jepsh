@@ -1,4 +1,4 @@
-import { state as globalState } from "@/shared";
+import { state as globalState } from "@/shared/global";
 import {
   use,
   useActionState,
@@ -16,8 +16,8 @@ import {
   useRef,
   useState,
   useTransition,
-} from "@/hooks";
-import { createError } from "@/handler";
+} from "@/hooks/basic";
+import { createError } from "@/utils/error";
 
 /**
  * Creates a collection of hooks with automatic key generation.

@@ -1,6 +1,71 @@
-import { state as globalState } from "@/shared";
-import { queueEffect } from "@/scheduler";
-import { captureError, enhanceError } from "@/handler";
+import { queueEffect, resetHookCounter } from "./scheduler";
+import { captureError } from "./error-boundary";
+
+import { state as globalState } from "@/shared/global";
+import { enhanceError } from "@/utils/error";
+
+/**
+ * Updates a function component's fiber node.
+ * @param {Object} fiber - The fiber node to update.
+ */
+function updateFunctionComponent(fiber) {
+  globalState.wipFiber = fiber;
+  fiber.hookCounter = 0;
+  globalState.wipFiber.hooks = globalState.wipFiber.hooks || {};
+  globalState.wipFiber.layoutEffects = globalState.wipFiber.layoutEffects || {};
+  globalState.wipFiber.insertionEffects = globalState.wipFiber.insertionEffects || {};
+
+  resetHookCounter(fiber);
+
+  let children;
+
+  try {
+    if (fiber.type.name === "Provider" || fiber.props?.context) {
+      const ctx = fiber.props.context;
+      if (ctx) ctx._currentValue = fiber.props.value;
+    }
+
+    children = fiber.type(fiber.props || {});
+  } catch (error) {
+    const enhanced = enhanceError(error, {
+      component: fiber.type.name || "Anonymous",
+      phase: "render",
+      fiber,
+    });
+
+    if (captureError(enhanced, fiber)) {
+      children = [];
+    } else {
+      throw enhanced;
+    }
+  }
+
+  if (children !== undefined) {
+    const normalizedChildren = Array.isArray(children) ? children : children != null ? [children] : [];
+    reconcileChildren(fiber, normalizedChildren);
+
+    if (fiber.hooks) {
+      Object.keys(fiber.hooks).forEach((key) => {
+        const hook = fiber.hooks[key];
+        if (hook && hook.needsToRun && hook.callback && typeof hook.callback === "function") {
+          queueEffect(hook);
+        }
+      });
+    }
+  }
+}
+
+/**
+ * Updates a host component's fiber node.
+ * @param {Object} fiber - The fiber node to update.
+ * @param {Function} createDom - Function to create DOM nodes.
+ */
+function updateHostComponent(fiber, createDom) {
+  if (!fiber.dom && fiber.type !== "FRAGMENT" && fiber.type !== "CONTEXT_PROVIDER") {
+    fiber.dom = createDom(fiber);
+  }
+  reconcileChildren(fiber, fiber.props.children || []);
+}
 
 /**
  * Reconciles children elements with the fiber tree.
@@ -86,79 +151,6 @@ function reconcileChildren(wipFiber, elements) {
     child.effectTag = "DELETION";
     globalState.deletions.push(child);
   });
-}
-
-/**
- * Resets the hook counter for a given fiber node.
- * @param {Object} fiber - The fiber node to reset counters for.
- */
-function resetHookCounter(fiber) {
-  if (globalState.componentHookCounters.has(fiber)) {
-    globalState.componentHookCounters.get(fiber).counter = 0;
-  }
-}
-
-/**
- * Updates a function component's fiber node.
- * @param {Object} fiber - The fiber node to update.
- */
-function updateFunctionComponent(fiber) {
-  globalState.wipFiber = fiber;
-  fiber.hookCounter = 0;
-  globalState.wipFiber.hooks = globalState.wipFiber.hooks || {};
-  globalState.wipFiber.layoutEffects = globalState.wipFiber.layoutEffects || {};
-  globalState.wipFiber.insertionEffects = globalState.wipFiber.insertionEffects || {};
-
-  resetHookCounter(fiber);
-
-  let children;
-
-  try {
-    if (fiber.type.name === "Provider" || fiber.props?.context) {
-      const ctx = fiber.props.context;
-      if (ctx) ctx._currentValue = fiber.props.value;
-    }
-
-    children = fiber.type(fiber.props || {});
-  } catch (error) {
-    const enhanced = enhanceError(error, {
-      component: fiber.type.name || "Anonymous",
-      phase: "render",
-      fiber,
-    });
-
-    if (captureError(enhanced, fiber)) {
-      children = [];
-    } else {
-      throw enhanced;
-    }
-  }
-
-  if (children !== undefined) {
-    const normalizedChildren = Array.isArray(children) ? children : children != null ? [children] : [];
-    reconcileChildren(fiber, normalizedChildren);
-
-    if (fiber.hooks) {
-      Object.keys(fiber.hooks).forEach((key) => {
-        const hook = fiber.hooks[key];
-        if (hook && hook.needsToRun && hook.callback && typeof hook.callback === "function") {
-          queueEffect(hook);
-        }
-      });
-    }
-  }
-}
-
-/**
- * Updates a host component's fiber node.
- * @param {Object} fiber - The fiber node to update.
- * @param {Function} createDom - Function to create DOM nodes.
- */
-function updateHostComponent(fiber, createDom) {
-  if (!fiber.dom && fiber.type !== "FRAGMENT" && fiber.type !== "CONTEXT_PROVIDER") {
-    fiber.dom = createDom(fiber);
-  }
-  reconcileChildren(fiber, fiber.props.children || []);
 }
 
 /**
