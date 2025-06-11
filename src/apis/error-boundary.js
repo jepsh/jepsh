@@ -1,6 +1,6 @@
 import { createElement } from "./element";
 
-import { ErrorBoundary } from "@/components";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 /**
  * Default error fallback component for error boundaries.

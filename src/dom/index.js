@@ -1,5 +1,4 @@
-import { workLoop } from "./work";
-import { render } from "./renderer";
+import { render, workLoop } from "./renderer";
 
 requestIdleCallback(workLoop); // eslint-disable-line no-undef
 
