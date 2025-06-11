@@ -82,11 +82,11 @@ function validateHookUsage(hookName, key, fiber) {
 }
 
 /**
- * Hook for handling asynchronous data with Suspense support.
- * @param {string} key - Unique identifier for the hook.
- * @param {Promise} promise - The promise to handle.
+ * A hook for handling promises in components.
+ * @param {string} key - The unique key for the hook.
+ * @param {Promise<any>} promise - The promise to handle.
  * @returns {any} The resolved value of the promise.
- * @throws {Error} Throws if promise rejects or no Suspense boundary exists.
+ * @throws {Error} If called outside a component or if the promise is invalid.
  */
 function use(key, promise) {
   validateHookUsage("use", key, globalState.wipFiber);
@@ -170,11 +170,12 @@ function use(key, promise) {
 }
 
 /**
- * Hook for managing form action state with pending/error states.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} action - The async action function to manage.
- * @param {any} initial - Initial state value.
- * @returns {Array} [state, dispatch, isPending] tuple.
+ * A hook for managing state with asynchronous actions.
+ * @param {string} key - The unique key for the hook.
+ * @param {(state: any, formData: any) => Promise<any>} action - The async action to perform.
+ * @param {any} initial - The initial state.
+ * @returns {[any, (formData: any) => Promise<void>, boolean, Error | null]} The state, dispatch function, pending status, and error.
+ * @throws {Error} If called outside a component or if the action is not a function.
  */
 function useActionState(key, action, initial) {
   validateHookUsage("useActionState", key, globalState.wipFiber);
@@ -247,21 +248,21 @@ function useActionState(key, action, initial) {
 }
 
 /**
- * Hook that returns a memoized callback.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} callback - The function to memoize.
- * @param {Array} deps - Dependency array for memoization.
- * @returns {Function} Memoized callback function.
+ * A hook for memoizing a callback function.
+ * @param {string} key - The unique key for the hook.
+ * @param {Function} callback - The callback function to memoize.
+ * @param {any[] | null} deps - The dependency array.
+ * @returns {Function} The memoized callback.
  */
 function useCallback(key, callback, deps) {
   return useMemo(key, () => callback, deps);
 }
 
 /**
- * Hook to access context values.
- * @param {Object} context - Context object created by createContext.
+ * A hook for accessing context values.
+ * @param {{ _context: { _currentValue: any } }} context - The context object.
  * @returns {any} The current context value.
- * @throws {Error} If context is invalid.
+ * @throws {Error} If called outside a component or with an invalid context.
  */
 function useContext(context) {
   if (!globalState.wipFiber) {
@@ -276,10 +277,10 @@ function useContext(context) {
 }
 
 /**
- * Hook for displaying debug information in development.
- * @param {string} key - Unique identifier for the hook.
- * @param {any} value - The value to display.
- * @param {Function} [formatter] - Optional formatter function.
+ * A hook for logging debug values in development mode.
+ * @param {string} key - The unique key for the hook.
+ * @param {any} value - The value to log.
+ * @param {(value: any) => any} [formatter] - Optional formatter for the value.
  */
 function useDebugValue(key, value, formatter) {
   const display = formatter ? formatter(value) : value;
@@ -287,8 +288,8 @@ function useDebugValue(key, value, formatter) {
 }
 
 /**
- * Hook that defers updates to non-urgent values.
- * @param {string} key - Unique identifier for the hook.
+ * A hook for deferring value updates during transitions.
+ * @param {string} key - The unique key for the hook.
  * @param {any} value - The value to defer.
  * @returns {any} The deferred value.
  */
@@ -342,10 +343,11 @@ function useDeferredValue(key, value) {
 }
 
 /**
- * Hook for side effects in function components.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} callback - The effect callback.
- * @param {Array} [deps] - Optional dependency array.
+ * A hook for scheduling side effects.
+ * @param {string} key - The unique key for the hook.
+ * @param {() => void | (() => void)} callback - The effect callback.
+ * @param {any[] | null} deps - The dependency array.
+ * @throws {Error} If called outside a component.
  */
 function useEffect(key, callback, deps) {
   validateHookUsage("useEffect", key, globalState.wipFiber);
@@ -395,11 +397,12 @@ function useEffect(key, callback, deps) {
 }
 
 /**
- * Hook to customize the instance value exposed to parent components.
- * @param {string} key - Unique identifier for the hook.
- * @param {Object} ref - Ref object to attach handle to.
- * @param {Function} createHandle - Function that creates the handle.
- * @param {Array} deps - Dependency array.
+ * A hook for creating imperative handles for refs.
+ * @param {string} key - The unique key for the hook.
+ * @param {{ current: any }} ref - The ref to attach the handle to.
+ * @param {() => any} createHandle - The function to create the handle.
+ * @param {any[] | null} deps - The dependency array.
+ * @throws {Error} If called outside a component or if createHandle is not a function.
  */
 function useImperativeHandle(key, ref, createHandle, deps) {
   validateHookUsage("useImperativeHandle", key, globalState.wipFiber);
@@ -445,10 +448,11 @@ function useImperativeHandle(key, ref, createHandle, deps) {
 }
 
 /**
- * Hook for synchronous DOM mutations before layout effects.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} callback - The insertion effect callback.
- * @param {Array} deps - Dependency array.
+ * A hook for scheduling insertion effects.
+ * @param {string} key - The unique key for the hook.
+ * @param {() => void | (() => void)} callback - The effect callback.
+ * @param {any[] | null} deps - The dependency array.
+ * @throws {Error} If called outside a component or if callback is not a function.
  */
 function useInsertionEffect(key, callback, deps) {
   validateHookUsage("useInsertionEffect", key, globalState.wipFiber);
@@ -511,10 +515,11 @@ function useInsertionEffect(key, callback, deps) {
 }
 
 /**
- * Hook for synchronous DOM measurements and mutations.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} callback - The layout effect callback.
- * @param {Array} deps - Dependency array.
+ * A hook for scheduling layout effects.
+ * @param {string} key - The unique key for the hook.
+ * @param {() => void | (() => void)} callback - The effect callback.
+ * @param {any[] | null} deps - The dependency array.
+ * @throws {Error} If called outside a component or if callback is not a function.
  */
 function useLayoutEffect(key, callback, deps) {
   validateHookUsage("useLayoutEffect", key, globalState.wipFiber);
@@ -577,11 +582,12 @@ function useLayoutEffect(key, callback, deps) {
 }
 
 /**
- * Hook that memoizes a value.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} factory - Function that creates the value.
- * @param {Array} deps - Dependency array.
+ * A hook for memoizing computed values.
+ * @param {string} key - The unique key for the hook.
+ * @param {() => any} factory - The factory function to compute the value.
+ * @param {any[] | null} deps - The dependency array.
  * @returns {any} The memoized value.
+ * @throws {Error} If called outside a component or if factory is not a function.
  */
 function useMemo(key, factory, deps) {
   validateHookUsage("useMemo", key, globalState.wipFiber);
@@ -628,11 +634,11 @@ function useMemo(key, factory, deps) {
 }
 
 /**
- * Hook for optimistic UI updates.
- * @param {string} key - Unique identifier for the hook.
- * @param {any} state - The current globalState.
- * @param {Function} [updateFn] - Optional state update function.
- * @returns {Array} [optimisticState, addOptimistic] tuple.
+ * A hook for managing optimistic state updates.
+ * @param {string} key - The unique key for the hook.
+ * @param {any} state - The initial state.
+ * @param {(state: any, action: any) => any} [updateFn] - Optional function to compute the next state.
+ * @returns {[any, (action: any) => void]} The optimistic state and update function.
  */
 function useOptimistic(key, state, updateFn) {
   const timeoutRef = useRef(`${key}-timeout`, null);
@@ -682,11 +688,12 @@ function useOptimistic(key, state, updateFn) {
 }
 
 /**
- * Hook for state management with reducer pattern.
- * @param {string} key - Unique identifier for the hook.
- * @param {Function} reducer - The reducer function.
- * @param {any} initial - Initial state value.
- * @returns {Array} [state, dispatch] tuple.
+ * A hook for managing state with a reducer.
+ * @param {string} key - The unique key for the hook.
+ * @param {(state: any, action: any) => any} reducer - The reducer function.
+ * @param {any} initial - The initial state.
+ * @returns {[any, (action: any) => void]} The state and dispatch function.
+ * @throws {Error} If called outside a component or if reducer is not a function.
  */
 function useReducer(key, reducer, initial) {
   validateHookUsage("useReducer", key, globalState.wipFiber);
@@ -742,10 +749,11 @@ function useReducer(key, reducer, initial) {
 }
 
 /**
- * Hook that creates a mutable ref object.
- * @param {string} key - Unique identifier for the hook.
- * @param {any} initial - Initial ref value.
- * @returns {Object} Ref object with current property.
+ * A hook for creating a mutable ref object.
+ * @param {string} key - The unique key for the hook.
+ * @param {any} initial - The initial value for the ref.
+ * @returns {{ current: any }} The ref object.
+ * @throws {Error} If called outside a component.
  */
 function useRef(key, initial) {
   validateHookUsage("useRef", key, globalState.wipFiber);
@@ -766,10 +774,11 @@ function useRef(key, initial) {
 }
 
 /**
- * Hook for state management in function components.
- * @param {string} key - Unique identifier for the hook.
- * @param {any} initial - Initial state value.
- * @returns {Array} [state, setState] tuple.
+ * A hook for managing component state.
+ * @param {string} key - The unique key for the hook.
+ * @param {any} initial - The initial state.
+ * @returns {[any, (action: any | ((state: any) => any)) => void]} The state and setState function.
+ * @throws {Error} If called outside a component.
  */
 function useState(key, initial) {
   validateHookUsage("useState", key, globalState.wipFiber);
@@ -820,9 +829,10 @@ function useState(key, initial) {
 }
 
 /**
- * Hook for marking non-urgent state updates.
- * @param {string} key - Unique identifier for the hook.
- * @returns {Array} [isPending, startTransition] tuple.
+ * A hook for managing transitions with pending state.
+ * @param {string} key - The unique key for the hook.
+ * @returns {[boolean, (callback: () => void) => void]} The pending status and startTransition function.
+ * @throws {Error} If called outside a component.
  */
 function useTransition(key) {
   validateHookUsage("useTransition", key, globalState.wipFiber);

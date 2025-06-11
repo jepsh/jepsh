@@ -26,10 +26,10 @@ function defaultErrorFallback(error) {
 }
 
 /**
- * Higher-order component that wraps a component with an error boundary.
+ * Wraps a component with an error boundary.
  * @param {Function} Component - The component to wrap.
- * @param {Function} [fallbackComponent] - Custom fallback UI component.
- * @returns {Function} The wrapped component with error boundary.
+ * @param {Function} [fallbackComponent] - The fallback UI to render on error.
+ * @returns {Function} The wrapped component.
  */
 function withErrorBoundary(Component, fallbackComponent) {
   return function WrappedWithErrorBoundary(props) {
