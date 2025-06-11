@@ -1,10 +1,10 @@
 import { isDev } from "@/core/constants";
 
 /**
- * Development-only warning logger.
- * @param {string} message - Warning message.
- * @param {string} [component] - Component name where warning occurred.
- * @param {any} [extra] - Additional debug information.
+ * Logs a development warning if in development mode.
+ * @param {string} message - The warning message.
+ * @param {string} [component] - The component name, if applicable.
+ * @param {any} [extra] - Additional information to log.
  */
 function devWarn(message, component, extra) {
   if (!isDev) return;

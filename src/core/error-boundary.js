@@ -2,10 +2,10 @@ import { state as globalState } from "@/shared/global";
 import { getComponentStack, isAncestor } from "@/utils/error";
 
 /**
- * Captures an error and finds the nearest error boundary to handle it.
+ * Captures and handles an error within an error boundary.
  * @param {Error} error - The error to capture.
- * @param {Object} fiber - The fiber node where the error occurred.
- * @returns {boolean} True if error was captured by a boundary, false otherwise.
+ * @param {{ type?: { name?: string }, parent?: any }} fiber - The fiber where the error occurred.
+ * @returns {boolean} True if the error was captured by an error boundary, false otherwise.
  */
 function captureError(error, fiber) {
   let boundary = null;

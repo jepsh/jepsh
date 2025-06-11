@@ -9,8 +9,8 @@ let isBatchingUpdates = false;
 let batchingTimeout = null;
 
 /**
- * Schedules a DOM update with given priority.
- * @param {number} [priority=PRIORITY.NORMAL] - The priority level of the update.
+ * Schedules an update for the component tree with the specified priority.
+ * @param {number} [priority=PRIORITY.NORMAL] - The priority level for the update.
  */
 function scheduleUpdate(priority = PRIORITY.NORMAL) {
   if (!globalState.currentRoot) return;
@@ -26,7 +26,7 @@ function scheduleUpdate(priority = PRIORITY.NORMAL) {
 }
 
 /**
- * Flushes all batched updates from the queue.
+ * Flushes batched updates to trigger rendering.
  */
 function flushBatchedUpdates() {
   if (updateQueue.length === 0) {
@@ -47,8 +47,8 @@ function flushBatchedUpdates() {
 }
 
 /**
- * Batches multiple updates together for performance optimization.
- * @param {Function} fn - Function containing updates to batch.
+ * Batches updates to optimize rendering performance.
+ * @param {() => void} fn - The function containing updates to batch.
  */
 function batchUpdates(fn) {
   if (isBatchingUpdates) {
@@ -68,8 +68,8 @@ function batchUpdates(fn) {
 }
 
 /**
- * Enqueues an update with batching support.
- * @param {number} priority - The priority level of the update.
+ * Enqueues an update with the specified priority, batching if enabled.
+ * @param {number} priority - The priority level for the update.
  */
 function enqueueBatchedUpdate(priority) {
   if (isBatchingUpdates) {
@@ -80,15 +80,15 @@ function enqueueBatchedUpdate(priority) {
 }
 
 /**
- * Queues an effect to be run after DOM updates.
- * @param {Object} effect - Effect object containing callback and metadata.
+ * Queues an effect to be executed after rendering.
+ * @param {{ callback: () => void, cleanup?: () => void, hasRun?: boolean, needsToRun?: boolean }} effect - The effect to queue.
  */
 function queueEffect(effect) {
   globalState.effectQueue.push(effect);
 }
 
 /**
- * Flushes all effects from the effect queue.
+ * Flushes all queued effects, executing their callbacks and handling cleanups.
  */
 function flushEffects() {
   const effects = [...globalState.effectQueue];
@@ -112,8 +112,8 @@ function flushEffects() {
 }
 
 /**
- * Resets the hook counter for a given fiber node.
- * @param {Object} fiber - The fiber node to reset counters for.
+ * Resets the hook counter for a given fiber.
+ * @param {{ hooks?: Record<string, any>, type?: { name?: string } }} fiber - The fiber to reset the hook counter for.
  */
 function resetHookCounter(fiber) {
   if (globalState.componentHookCounters.has(fiber)) {
